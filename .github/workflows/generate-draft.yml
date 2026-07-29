@@ -1,0 +1,66 @@
+name: Generate social draft
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_url:
+        description: "Primary source URL"
+        required: true
+        type: string
+      notes:
+        description: "Topic angle or notes for the post"
+        required: true
+        type: string
+      second_url:
+        description: "Optional second source URL"
+        required: false
+        type: string
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Install Chromium (for card image rendering)
+        uses: browser-actions/setup-chrome@v1
+        id: setup-chrome
+
+      - name: Generate draft
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+          SOURCE_URL: ${{ inputs.source_url }}
+          SECOND_URL: ${{ inputs.second_url }}
+          NOTES: ${{ inputs.notes }}
+        run: python3 scripts/generate_draft.py
+
+      - name: Generate card photos
+        env:
+          PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHROME_BIN: ${{ steps.setup-chrome.outputs.chrome-path }}
+        run: python3 scripts/generate_card_photo.py --all
+
+      - name: Rebuild preview
+        run: python3 scripts/build_preview.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "MacFire Content Bot"
+          git config user.email "noreply@macfireltd.co.uk"
+          git add content/posts/ content/images/ preview/
+          git diff --staged --quiet || git commit -m "content: auto-generate social draft [run $GITHUB_RUN_ID]"
+          git push origin main

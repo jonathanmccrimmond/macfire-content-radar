@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Scottish Building Standards Blog",
+    "feed": "https://blogs.gov.scot/building-standards/feed/",
+    "keywords": [],
+    "notes_template": "{title} — what this means for Scottish fire safety contractors and building owners"
+  },
+  {
+    "name": "Scottish Statutory Instruments - Fire and Building",
+    "feed": "https://www.legislation.gov.uk/new/ssi/data.feed",
+    "keywords": ["fire", "building"],
+    "notes_template": "New Scottish legislation: {title} — implications for fire safety compliance"
+  },
+  {
+    "name": "Scottish Government Building Standards Latest",
+    "feed": "https://www.gov.scot/policies/building-standards/latest/feed/",
+    "keywords": [],
+    "notes_template": "{title} — update from Scottish Government building standards"
+  }
+]

@@ -1,0 +1,12 @@
+.pytest_cache/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+.env.*
+!.env.example
+.DS_Store
+
+# Local layout-check artifact from build_post_image.py --demo
+content/images/demo-card.png
